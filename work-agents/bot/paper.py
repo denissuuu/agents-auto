@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import price
 from strategy import decide
 from explain import explain
+import notify
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 PORTFOLIO = os.path.join(BASE, "paper_portfolio.json")
@@ -88,6 +89,8 @@ def step():
         with open(TRADES, "a", encoding="utf-8") as f:
             f.write(bloc)
         print(bloc.strip())
+    if executed:
+        notify.alert("Trade simule", f"Signal {sig} execute a {p:.2f}, valeur {val:.2f}")
 
 
 def main():
