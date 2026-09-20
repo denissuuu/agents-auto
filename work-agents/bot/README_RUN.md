@@ -1,20 +1,17 @@
 # Run économe (Mac)
 
 ## Principe
-Pas de boucle permanente. 1 exécution toutes les 5 min via launchd.
-Conso quasi nulle : 1 appel API / 5 min, < 1 s CPU. Mac dort entre exécutions (sauf sleep profond qui saute le tick). Pas de VPS requis pour MVP.
+Boucle de fond légère : 1 exécution toutes les 15 s via `run_once.sh`.
+Conso faible : 1 appel API / 15 s, < 1 s CPU. (launchd abandonné : refusé par macOS, erreur 78.)
 
-## Install
+## Start (1 commande)
 ```bash
-cp work-agents/bot/com.denis.bot.plist ~/Library/LaunchAgents/
-launchctl load ~/Library/LaunchAgents/com.denis.bot.plist
+nohup bash -c 'while true; do /bin/bash work-agents/bot/run_once.sh; sleep 15; done' > work-agents/bot/loop.out.log 2>&1 &
 ```
 
-## Start / Stop
+## Stop
 ```bash
-launchctl start com.denis.bot
-launchctl stop com.denis.bot
-launchctl unload ~/Library/LaunchAgents/com.denis.bot.plist
+pkill -f "while true; do /bin/bash.*run_once.sh" ; echo stoppé
 ```
 
 ## Logs
@@ -23,4 +20,4 @@ tail -f work-agents/bot/paper.log
 ```
 
 ## Option
-Si besoin, passer `poll` à 300 s dans `config.json` pour cohérence.
+Si besoin, `poll` à 15 s dans `config.json` pour cohérence.

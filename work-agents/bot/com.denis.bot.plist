@@ -12,12 +12,12 @@
     <key>WorkingDirectory</key>
     <string>/Users/juliamenard/Desktop/denis-code/work-agents/bot</string>
     <key>StartInterval</key>
-    <integer>300</integer>
+    <integer>15</integer>
     <key>RunAtLoad</key>
     <false/>
     <key>StandardOutPath</key>
-    <string>/Users/juliamenard/Desktop/denis-code/work-agents/bot/paper.log</string>
+    <string>/Users/juliamenard/Desktop/denis-code/work-agents/bot/paper.out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/juliamenard/Desktop/denis-code/work-agents/bot/paper.log</string>
+    <string>/Users/juliamenard/Desktop/denis-code/work-agents/bot/paper.err.log</string>
 </dict>
 </plist>
