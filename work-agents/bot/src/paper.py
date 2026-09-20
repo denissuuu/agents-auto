@@ -13,9 +13,12 @@ from explain import explain
 import notify
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-PORTFOLIO = os.path.join(BASE, "paper_portfolio.json")
-LOG = os.path.join(BASE, "paper.log")
-TRADES = os.path.join(BASE, "trades.log")
+ROOT = os.path.dirname(BASE)
+DATA = os.path.join(ROOT, "data")
+os.makedirs(DATA, exist_ok=True)
+PORTFOLIO = os.path.join(DATA, "paper_portfolio.json")
+LOG = os.path.join(DATA, "paper.log")
+TRADES = os.path.join(DATA, "trades.log")
 KLINES_URL = "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=30"
 FEE = 0.001
 

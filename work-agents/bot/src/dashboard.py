@@ -5,10 +5,13 @@ import os
 import re
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-PORTFOLIO = os.path.join(BASE, "paper_portfolio.json")
-LOG = os.path.join(BASE, "paper.log")
-TRADES = os.path.join(BASE, "trades.log")
-OUT = os.path.join(BASE, "dashboard.html")
+ROOT = os.path.dirname(BASE)
+DATA = os.path.join(ROOT, "data")
+os.makedirs(DATA, exist_ok=True)
+PORTFOLIO = os.path.join(DATA, "paper_portfolio.json")
+LOG = os.path.join(DATA, "paper.log")
+TRADES = os.path.join(DATA, "trades.log")
+OUT = os.path.join(DATA, "dashboard.html")
 START_CAPITAL = 1000.0
 
 

@@ -13,7 +13,9 @@ try:
 except ImportError:
     from .strategy import decide
 
-CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+BASE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(BASE)
+CONFIG_PATH = os.path.join(ROOT, "config", "config.json")
 _history = []
 
 

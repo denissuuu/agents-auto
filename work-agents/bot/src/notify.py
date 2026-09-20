@@ -4,7 +4,10 @@ import os
 import subprocess
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-ALERTS = os.path.join(BASE, "alerts.log")
+ROOT = os.path.dirname(BASE)
+DATA = os.path.join(ROOT, "data")
+os.makedirs(DATA, exist_ok=True)
+ALERTS = os.path.join(DATA, "alerts.log")
 
 
 def alert(title, message):

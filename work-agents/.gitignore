@@ -14,13 +14,10 @@ __pycache__/
 # Config OpenCode locale — masquée de GitHub
 .opencode/
 
-# Guide local + résultats paper — non pushés
-bot/GUIDE_SIMPLE.md
-bot/paper.log
-bot/paper_portfolio.json
-bot/dashboard.html
-bot/trades.log
-bot/alerts.log
+# Données locales + guide local + plist obsolète — non pushés
+bot/data/
+bot/docs/GUIDE_SIMPLE.md
+bot/com.denis.bot.plist
 *.log
 
 # Build / cache
