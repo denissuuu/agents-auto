@@ -1,0 +1,29 @@
+# Dépendances
+node_modules/
+vendor/
+__pycache__/
+*.pyc
+
+# Secrets — ne jamais pusher
+.env
+.env.*
+*.key
+*.pem
+!.env.example
+
+# Logs OpenCode / sorties d'outils
+.opencode/plan/
+*.log
+
+# Build / cache
+dist/
+build/
+coverage/
+.cache/
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

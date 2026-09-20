@@ -1,0 +1,46 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // Modèle unique imposé : Big Pickle gratuit (OpenCode Zen).
+  // Format provider/model : opencode/big-pickle
+  "model": "opencode/big-pickle",
+  "default_agent": "orchestrator",
+  // Lecture/écriture sans demande d'autorisation (ressources locales).
+  // Shell : allowlist de commandes sûres, le reste demande confirmation.
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "glob", "resource": "*", "effect": "allow" },
+    { "action": "grep", "resource": "*", "effect": "allow" },
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "question", "resource": "*", "effect": "allow" },
+    { "action": "subagent", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "git status *", "effect": "allow" },
+    { "action": "shell", "resource": "git diff *", "effect": "allow" },
+    { "action": "shell", "resource": "git log *", "effect": "allow" },
+    { "action": "shell", "resource": "ls *", "effect": "allow" },
+    { "action": "shell", "resource": "cat *", "effect": "allow" },
+    { "action": "shell", "resource": "npm run *", "effect": "allow" },
+    { "action": "shell", "resource": "npm test *", "effect": "allow" },
+    { "action": "read", "resource": "*.env", "effect": "ask" },
+    { "action": "read", "resource": "*.env.*", "effect": "ask" },
+    { "action": "shell", "resource": "git push *", "effect": "deny" },
+    { "action": "shell", "resource": "rm -rf *", "effect": "deny" }
+  ],
+  // Optimisation anti-surconsommation tokens.
+  "tool_output": {
+    "max_lines": 500,
+    "max_bytes": 15360
+  },
+  "compaction": {
+    "auto": true,
+    "keep": { "tokens": 8000 },
+    "buffer": 12000
+  },
+  "formatter": false,
+  "agents": {
+    // Force les agents de maintenance sur Big Pickle aussi (zéro autre modèle).
+    "title": { "model": "opencode/big-pickle" },
+    "summary": { "model": "opencode/big-pickle" },
+    "compaction": { "model": "opencode/big-pickle" }
+  }
+}
