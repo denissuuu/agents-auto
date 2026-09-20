@@ -11,9 +11,8 @@ __pycache__/
 *.pem
 !.env.example
 
-# Logs OpenCode / sorties d'outils
-.opencode/plan/
-*.log
+# Config OpenCode locale — masquée de GitHub
+.opencode/
 
 # Build / cache
 dist/
