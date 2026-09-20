@@ -14,6 +14,12 @@ __pycache__/
 # Config OpenCode locale — masquée de GitHub
 .opencode/
 
+# Guide local + résultats paper — non pushés
+bot/GUIDE_SIMPLE.md
+bot/paper.log
+bot/paper_portfolio.json
+*.log
+
 # Build / cache
 dist/
 build/
