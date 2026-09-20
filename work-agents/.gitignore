@@ -18,6 +18,9 @@ __pycache__/
 bot/GUIDE_SIMPLE.md
 bot/paper.log
 bot/paper_portfolio.json
+bot/dashboard.html
+bot/trades.log
+bot/alerts.log
 *.log
 
 # Build / cache
