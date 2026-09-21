@@ -31,7 +31,7 @@ def load_portfolio():
             pf.setdefault("cash", 1000.0)
             pf.setdefault("trades", 0)
             return pf
-        # Ancien portfolio BTC : reset (actif change).
+        # Ancien portfolio BTC/SOL : reset (actif change).
         return {"cash": 1000.0, "xrp": 0.0, "trades": 0}
     return {"cash": 1000.0, "xrp": 0.0, "trades": 0}
 

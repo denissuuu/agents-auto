@@ -71,8 +71,8 @@ def main():
             pf = json.load(f)
     except (OSError, ValueError):
         pf = {"cash": START_CAPITAL, "xrp": 0.0, "trades": 0}
-    if "xrp" not in pf and "btc" in pf:
-        # Ancien portfolio BTC : reset (actif change).
+    if "xrp" not in pf:
+        # Ancien portfolio BTC/SOL : reset (actif change).
         pf = {"cash": START_CAPITAL, "xrp": 0.0, "trades": 0}
     cash = fnum(pf.get("cash"), START_CAPITAL)
     xrp = fnum(pf.get("xrp"), 0.0)
