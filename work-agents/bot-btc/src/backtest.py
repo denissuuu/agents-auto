@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from strategy import decide
 
-KLINES_URL = "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1h&limit=100"
+KLINES_URL = "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=100"
 START_CASH = 1000.0
 FEE = 0.001
 
@@ -21,7 +21,7 @@ def fetch_closes():
 
 def main():
     closes = fetch_closes()
-    cash, sol = START_CASH, 0.0
+    cash, btc = START_CASH, 0.0
     buy_price, trades, wins = 0.0, 0, 0
     for i in range(25, len(closes) + 1):
         try:
@@ -30,17 +30,17 @@ def main():
             continue
         p = closes[i - 1]
         if sig == "BUY" and cash > 0:
-            sol = cash * (1 - FEE) / p
+            btc = cash * (1 - FEE) / p
             cash = 0.0
             buy_price = p
             trades += 1
-        elif sig == "SELL" and sol > 0:
-            cash = sol * p * (1 - FEE)
-            sol = 0.0
+        elif sig == "SELL" and btc > 0:
+            cash = btc * p * (1 - FEE)
+            btc = 0.0
             trades += 1
             if p > buy_price:
                 wins += 1
-    end_val = cash + sol * closes[-1]
+    end_val = cash + btc * closes[-1]
     ret = (end_val - START_CASH) / START_CASH * 100
     bh = (closes[-1] - closes[0]) / closes[0] * 100
     print({"trades": trades, "win": wins, "return%": round(ret, 2), "buy&hold%": round(bh, 2)})

@@ -5,3 +5,4 @@
 - Réponses en français, courtes, orientées résultat.
 - Économie tokens : lire par plages, résumés < 15 lignes, un subagent à la fois, pas de refactor hors périmètre.
 - Lecture/écriture autorisées sans confirmation. Shell : commandes courantes auto-autorisées, `git push` et `rm -rf` interdits.
+- Multi-crypto : ne jamais remplacer un bot existant. Dupliquer par symbole (ex. `bot-btc/`, `bot-sol/`), garder historique + portefeuille de chaque monnaie.

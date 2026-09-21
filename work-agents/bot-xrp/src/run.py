@@ -25,7 +25,7 @@ def load_config():
 
 
 def iterate(cfg):
-    symbol = cfg.get("symbol", "SOLUSDT")
+    symbol = cfg.get("symbol", "XRPUSDT")
     p = price.get_price(symbol)
     _history.append(p)
     try:

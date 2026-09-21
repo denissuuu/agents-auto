@@ -27,7 +27,7 @@ def explain(signal, sma_fast, sma_slow, rsi, prix, executed=True):
                 f"n'est pas surchauffe (<70)."
             )
         return (
-            f"Signal BUY mais deja tout en SOL, j'attends. "
+            f"Signal BUY mais deja tout en XRP, j'attends. "
             f"Moyenne 7h ({sf:.0f}) au-dessus de la 25h ({ss:.0f}), "
             f"stress {r:.0f} (<70)."
         )
@@ -39,7 +39,7 @@ def explain(signal, sma_fast, sma_slow, rsi, prix, executed=True):
                 f"reste au-dessus de 30."
             )
         return (
-            f"Signal SELL mais rien en SOL, je ne fais rien. "
+            f"Signal SELL mais rien en XRP, je ne fais rien. "
             f"Moyenne 7h ({sf:.0f}) sous la 25h ({ss:.0f}), stress {r:.0f}."
         )
     return (

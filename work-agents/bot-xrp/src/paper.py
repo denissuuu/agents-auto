@@ -19,7 +19,7 @@ os.makedirs(DATA, exist_ok=True)
 PORTFOLIO = os.path.join(DATA, "paper_portfolio.json")
 LOG = os.path.join(DATA, "paper.log")
 TRADES = os.path.join(DATA, "trades.log")
-KLINES_URL = "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1h&limit=30"
+KLINES_URL = "https://api.binance.com/api/v3/klines?symbol=XRPUSDT&interval=1h&limit=30"
 FEE = 0.001
 
 
@@ -27,13 +27,13 @@ def load_portfolio():
     if os.path.exists(PORTFOLIO):
         with open(PORTFOLIO, encoding="utf-8") as f:
             pf = json.load(f)
-        if "sol" in pf:
+        if "xrp" in pf:
             pf.setdefault("cash", 1000.0)
             pf.setdefault("trades", 0)
             return pf
         # Ancien portfolio BTC : reset (actif change).
-        return {"cash": 1000.0, "sol": 0.0, "trades": 0}
-    return {"cash": 1000.0, "sol": 0.0, "trades": 0}
+        return {"cash": 1000.0, "xrp": 0.0, "trades": 0}
+    return {"cash": 1000.0, "xrp": 0.0, "trades": 0}
 
 
 def save_portfolio(pf):
@@ -66,7 +66,7 @@ def get_last_signal():
 
 def step():
     pf = load_portfolio()
-    p = price.get_price("SOLUSDT")
+    p = price.get_price("XRPUSDT")
     hist = get_context() + [p]
     try:
         dec = decide(hist)
@@ -77,18 +77,18 @@ def step():
     prev = get_last_signal()
     executed = False
     if sig == "BUY" and pf["cash"] > 0:
-        pf["sol"] = pf["cash"] * (1 - FEE) / p
+        pf["xrp"] = pf["cash"] * (1 - FEE) / p
         pf["cash"] = 0.0
         pf["trades"] += 1
         executed = True
-    elif sig == "SELL" and pf["sol"] > 0:
-        pf["cash"] = pf["sol"] * p * (1 - FEE)
-        pf["sol"] = 0.0
+    elif sig == "SELL" and pf["xrp"] > 0:
+        pf["cash"] = pf["xrp"] * p * (1 - FEE)
+        pf["xrp"] = 0.0
         pf["trades"] += 1
         executed = True
     save_portfolio(pf)
-    val = pf["cash"] + pf["sol"] * p
-    line = f"{datetime.datetime.now().isoformat(timespec='seconds')} prix={p:.2f} signal={sig} SMA7={sma_fast:.2f} SMA25={sma_slow:.2f} RSI={rsi_val:.2f} cash={pf['cash']:.2f} sol={pf['sol']:.6f} valeur={val:.2f}\n"
+    val = pf["cash"] + pf["xrp"] * p
+    line = f"{datetime.datetime.now().isoformat(timespec='seconds')} prix={p:.2f} signal={sig} SMA7={sma_fast:.2f} SMA25={sma_slow:.2f} RSI={rsi_val:.2f} cash={pf['cash']:.2f} xrp={pf['xrp']:.6f} valeur={val:.2f}\n"
     with open(LOG, "a", encoding="utf-8") as f:
         f.write(line)
     print(line.strip())

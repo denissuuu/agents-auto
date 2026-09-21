@@ -31,7 +31,7 @@ def parse_tick(line):
     ts = line.split(" ")[0] if line else "-"
     return {"ts": ts, "prix": grab("prix"), "signal": grab("signal"),
             "sma7": grab("SMA7"), "sma25": grab("SMA25"), "rsi": grab("RSI"),
-            "cash": grab("cash"), "sol": grab("sol"), "valeur": grab("valeur"),
+            "cash": grab("cash"), "xrp": grab("xrp"), "valeur": grab("valeur"),
             "raw": line}
 
 
@@ -70,12 +70,12 @@ def main():
         with open(PORTFOLIO, encoding="utf-8") as f:
             pf = json.load(f)
     except (OSError, ValueError):
-        pf = {"cash": START_CAPITAL, "sol": 0.0, "trades": 0}
-    if "sol" not in pf and "btc" in pf:
+        pf = {"cash": START_CAPITAL, "xrp": 0.0, "trades": 0}
+    if "xrp" not in pf and "btc" in pf:
         # Ancien portfolio BTC : reset (actif change).
-        pf = {"cash": START_CAPITAL, "sol": 0.0, "trades": 0}
+        pf = {"cash": START_CAPITAL, "xrp": 0.0, "trades": 0}
     cash = fnum(pf.get("cash"), START_CAPITAL)
-    sol = fnum(pf.get("sol"), 0.0)
+    xrp = fnum(pf.get("xrp"), 0.0)
     ntrades = pf.get("trades", 0)
 
     ticks = [parse_tick(ln) for ln in tail_lines(LOG, 100)]
@@ -86,7 +86,7 @@ def main():
     live = None
     try:
         import price as price_mod
-        live = float(price_mod.get_price("SOLUSDT"))
+        live = float(price_mod.get_price("XRPUSDT"))
     except Exception:
         live = prix_hist[-1] if prix_hist else 0.0
     if live is None:
@@ -97,7 +97,7 @@ def main():
     color = "#16a34a" if up else "#dc2626"
     arrow = "▲" if up else "▼"
 
-    cur_val = cash + sol * live
+    cur_val = cash + xrp * live
     pnl = cur_val - START_CAPITAL
     pnl_c = "#16a34a" if pnl >= 0 else "#dc2626"
 
@@ -127,13 +127,13 @@ def main():
     rows = ""
     for t in ticks[-10:][::-1]:
         rows += ("<tr>" + "".join(f"<td>{html.escape(str(t[k]))}</td>"
-                 for k in ("ts", "prix", "signal", "sma7", "sma25", "rsi", "cash", "sol", "valeur")) + "</tr>\n")
+                 for k in ("ts", "prix", "signal", "sma7", "sma25", "rsi", "cash", "xrp", "valeur")) + "</tr>\n")
 
     page = f"""<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta http-equiv="refresh" content="60">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bot SOL — Dashboard SIMULATION</title>
+<title>Bot XRP — Dashboard SIMULATION</title>
 <style>
 body{{font-family:sans-serif;max-width:900px;margin:1em auto;padding:0 1em;color:#0f172a}}
 .card{{border:1px solid #e2e8f0;border-radius:8px;padding:1em;margin:1em 0}}
@@ -145,7 +145,7 @@ th{{background:#f1f5f9}}td:first-child,th:first-child{{text-align:left}}
 pre{{white-space:pre-wrap;background:#f8fafc;padding:.6em;border-radius:6px}}
 </style></head>
 <body>
-<h1>Bot SOL — Dashboard <span class="badge">SIMULATION</span></h1>
+<h1>Bot XRP — Dashboard <span class="badge">SIMULATION</span></h1>
 <p class="muted">Trading simulé (SIMULATION) — aucun argent réel. Rafraîchi toutes les 60 s.</p>
 <div class="card">
 <h2>Prix actuel (SIMULATION) : <span style="color:{color}">{live:.2f} $ {arrow}</span></h2>
@@ -153,7 +153,7 @@ pre{{white-space:pre-wrap;background:#f8fafc;padding:.6em;border-radius:6px}}
 </div>
 <div class="card">
 <h2>Portefeuille simulé (SIMULATION) : {cur_val:.2f} $ <span style="color:{pnl_c}">({pnl:+.2f} $ vs {START_CAPITAL:.0f} $)</span></h2>
-<p>Cash simulé : {cash:.2f} $ — SOL simulé : {sol:.6f} — Nombre de trades simulés : {html.escape(str(ntrades))}</p>
+<p>Cash simulé : {cash:.2f} $ — XRP simulé : {xrp:.6f} — Nombre de trades simulés : {html.escape(str(ntrades))}</p>
 </div>
 <div class="card">
 <h2>Dernier signal (SIMULATION) : {html.escape(str(last_signal))}</h2>
@@ -162,7 +162,7 @@ pre{{white-space:pre-wrap;background:#f8fafc;padding:.6em;border-radius:6px}}
 <div class="card"><h2>Courbe prix (100 derniers ticks, SIMULATION)</h2>{svg_curve(prix_hist, color=color)}</div>
 <div class="card"><h2>Courbe valeur portefeuille (SIMULATION)</h2>{svg_curve(val_hist, color="#7c3aed")}</div>
 <div class="card"><h2>10 derniers ticks (SIMULATION)</h2>
-<table><tr><th>heure</th><th>prix</th><th>signal</th><th>SMA7</th><th>SMA25</th><th>RSI</th><th>cash</th><th>sol</th><th>valeur</th></tr>
+<table><tr><th>heure</th><th>prix</th><th>signal</th><th>SMA7</th><th>SMA25</th><th>RSI</th><th>cash</th><th>xrp</th><th>valeur</th></tr>
 {rows if rows else "<tr><td colspan=9>Aucun tick.</td></tr>"}
 </table></div>
 <p class="muted">SIMULATION — débutant : le gain/perte affiché est fictif, aucun ordre réel n'est envoyé.</p>

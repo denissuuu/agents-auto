@@ -1,4 +1,4 @@
-"""Fetch SOL/USDT price from Binance public API (stdlib only)."""
+"""Fetch XRP/USDT price from Binance public API (stdlib only)."""
 import json
 import urllib.parse
 import urllib.request
@@ -6,7 +6,7 @@ import urllib.request
 API_URL = "https://api.binance.com/api/v3/ticker/price"
 
 
-def get_price(symbol="SOLUSDT"):
+def get_price(symbol="XRPUSDT"):
     """Return current price as float for given symbol. Raises RuntimeError on failure."""
     url = f"{API_URL}?{urllib.parse.urlencode({'symbol': symbol})}"
     try:
@@ -25,7 +25,7 @@ def get_price(symbol="SOLUSDT"):
 
 def main():
     price = get_price()
-    print(f"SOL/USDT: {price:.2f}")
+    print(f"XRP/USDT: {price:.2f}")
 
 
 if __name__ == "__main__":
