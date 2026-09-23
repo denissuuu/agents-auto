@@ -25,6 +25,8 @@ dist/
 build/
 coverage/
 .cache/
+.pytest_cache/
+.coverage
 
 # OS / éditeurs
 .DS_Store
