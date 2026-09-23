@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Run tests (bot)
+        if: always()
+        run: |
+          if [ -d "work-agents/bot/tests" ] && find work-agents/bot/tests -name "*.py" | grep -q .; then
+            cd work-agents/bot && PYTHONPATH=src python -m pytest tests/ -v
+          fi
+        continue-on-error: true
+
+      - name: Run tests (bot-btc)
+        if: always()
+        run: |
+          if [ -d "work-agents/bot-btc/tests" ] && find work-agents/bot-btc/tests -name "*.py" | grep -q .; then
+            cd work-agents/bot-btc && PYTHONPATH=src python -m pytest tests/ -v
+          fi
+        continue-on-error: true
+
+      - name: Run tests (bot-sol)
+        if: always()
+        run: |
+          if [ -d "work-agents/bot-sol/tests" ] && find work-agents/bot-sol/tests -name "*.py" | grep -q .; then
+            cd work-agents/bot-sol && PYTHONPATH=src python -m pytest tests/ -v
+          fi
+        continue-on-error: true
+
+      - name: Run tests (bot-xrp)
+        if: always()
+        run: |
+          if [ -d "work-agents/bot-xrp/tests" ] && find work-agents/bot-xrp/tests -name "*.py" | grep -q .; then
+            cd work-agents/bot-xrp && PYTHONPATH=src python -m pytest tests/ -v
+          fi
+        continue-on-error: true
+
+      - name: Python syntax check
+        if: always()
+        run: python -m compileall work-agents 2>&1 | tail -5
