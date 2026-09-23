@@ -30,6 +30,14 @@ bash work-agents/bot/scripts/run_once.sh
 - `src/strategy.py` + `src/indicators.py` : signal SMA/RSI ; `src/explain.py` : texte FR.
 - `config/config.json` : symbole + intervalle ; `scripts/run_once.sh` : paper + dashboard.
 
+## Tests
+
+Lancement des tests unitaires (depuis le dossier du bot) :
+
+```bash
+PYTHONPATH=src python3 -m pytest tests/
+```
+
 ## Disclaimer
 
 Aucun gain garanti, argent fictif : ce bot est une simulation pédagogique, pas un conseil financier.
