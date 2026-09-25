@@ -1,1 +1,51 @@
-{"exchange": "binance", "paper": true, "poll_interval_sec": 60, "symbol": "XRPUSDT", "vs": "USDT"}
+{
+  "mode": "paper",
+  "paper": true,
+  "symbol": "XRPEUR",
+  "quote_currency": "EUR",
+  "price_currency": "EUR",
+  "strategy_mode": "buy_hold",
+  "initial_capital": 1000.0,
+  "poll_interval_sec": 60,
+  "kill_switch": false,
+  "strategy": {
+    "fast": 7,
+    "slow": 25,
+    "rsi": 14
+  },
+  "execution": {
+    "fee_rate": 0.001,
+    "spread": 0.002,
+    "slippage": 0.0005,
+    "max_notional_per_trade": 250.0,
+    "min_notional": 5.0,
+    "allocation_pct": 0.2,
+    "max_position_pct": 0.25,
+    "max_total_exposure_pct": 0.5,
+    "min_cash_reserve": 50.0,
+    "fee_reserve_multiplier": 1.1,
+    "participation_rate": 1.0
+  },
+  "risk": {
+    "stop_loss_pct": 0.1,
+    "max_daily_loss_pct": 0.03,
+    "max_risk_per_position_pct": 0.02,
+    "max_position_days": 30,
+    "profit_levels": [0.05, 0.1, 0.2],
+    "profit_fractions": [0.25, 0.25, 0.2],
+    "trailing_stop_pct": 0.08
+  },
+  "buy_hold": {
+    "allocation_pct": 0.95,
+    "max_position_pct": 0.95,
+    "max_total_exposure_pct": 0.95,
+    "max_notional_per_trade": 1000000.0,
+    "max_risk_per_position_pct": 0.1
+  },
+  "backtest": {
+    "interval": "1d",
+    "data_file": "data/xrp_history.csv",
+    "public_data": false,
+    "warmup_bars": 26
+  }
+}
