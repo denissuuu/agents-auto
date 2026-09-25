@@ -12,7 +12,10 @@ PORTFOLIO = os.path.join(DATA, "paper_portfolio.json")
 LOG = os.path.join(DATA, "paper.log")
 TRADES = os.path.join(DATA, "trades.log")
 OUT = os.path.join(DATA, "dashboard.html")
+CONFIG_PATH = os.path.join(ROOT, "config", "config.json")
 START_CAPITAL = 1000.0
+QUOTE_CURRENCY = "EUR"
+PRICE_CURRENCY = "EUR"
 
 
 def tail_lines(path, n):
@@ -66,14 +69,31 @@ def svg_curve(values, w=560, h=140, color="#2563eb"):
 
 
 def main():
+    global START_CAPITAL, QUOTE_CURRENCY, PRICE_CURRENCY
+    try:
+        with open(CONFIG_PATH, encoding="utf-8") as f:
+            config = json.load(f)
+        START_CAPITAL = float(config.get("initial_capital", START_CAPITAL))
+        QUOTE_CURRENCY = str(config.get("quote_currency", QUOTE_CURRENCY))
+        PRICE_CURRENCY = str(config.get("price_currency", PRICE_CURRENCY))
+    except (OSError, ValueError, TypeError):
+        config = {}
     try:
         with open(PORTFOLIO, encoding="utf-8") as f:
             pf = json.load(f)
     except (OSError, ValueError):
         pf = {"cash": START_CAPITAL, "btc": 0.0, "trades": 0}
+    if "btc" not in pf:
+        # Ancien portfolio BTC/SOL : reset (actif change).
+        pf = {"cash": START_CAPITAL, "btc": 0.0, "trades": 0}
     cash = fnum(pf.get("cash"), START_CAPITAL)
     btc = fnum(pf.get("btc"), 0.0)
-    ntrades = pf.get("trades", 0)
+    ntrades = pf.get("closed_trades", pf.get("trades", 0))
+    available_cash = fnum(pf.get("available_cash"), cash)
+    reserved_cash = fnum(pf.get("reserved_cash"), 0.0) + fnum(pf.get("fee_reserve_cash"), 0.0)
+    fees = fnum(pf.get("total_fees"), 0.0)
+    realized = fnum(pf.get("realized_pnl"), 0.0)
+    unrealized = fnum(pf.get("unrealized_pnl"), 0.0)
 
     ticks = [parse_tick(ln) for ln in tail_lines(LOG, 100)]
     prix_hist = [fnum(t["prix"]) for t in ticks if fnum(t["prix"], -1) >= 0]
@@ -83,7 +103,7 @@ def main():
     live = None
     try:
         import price as price_mod
-        live = float(price_mod.get_price("BTCUSDT"))
+        live = float(price_mod.get_price(str(config.get("symbol", "BTCEUR")).upper()))
     except Exception:
         live = prix_hist[-1] if prix_hist else 0.0
     if live is None:
@@ -145,12 +165,14 @@ pre{{white-space:pre-wrap;background:#f8fafc;padding:.6em;border-radius:6px}}
 <h1>Bot BTC — Dashboard <span class="badge">SIMULATION</span></h1>
 <p class="muted">Trading simulé (SIMULATION) — aucun argent réel. Rafraîchi toutes les 60 s.</p>
 <div class="card">
-<h2>Prix actuel (SIMULATION) : <span style="color:{color}">{live:.2f} $ {arrow}</span></h2>
-<p>Référence début de période : {ref:.2f} $ — <span style="color:{color}">{"en hausse" if up else "en baisse"}</span>.</p>
+<h2>Prix actuel (SIMULATION) : <span style="color:{color}">{live:.8f} {html.escape(PRICE_CURRENCY)} {arrow}</span></h2>
+<p>Référence début de période : {ref:.8f} {html.escape(PRICE_CURRENCY)} — <span style="color:{color}">{"en hausse" if up else "en baisse"}</span>.</p>
 </div>
 <div class="card">
-<h2>Portefeuille simulé (SIMULATION) : {cur_val:.2f} $ <span style="color:{pnl_c}">({pnl:+.2f} $ vs {START_CAPITAL:.0f} $)</span></h2>
-<p>Cash simulé : {cash:.2f} $ — BTC simulé : {btc:.6f} — Nombre de trades simulés : {html.escape(str(ntrades))}</p>
+<h2>Portefeuille simulé (SIMULATION) : {cur_val:.2f} {html.escape(QUOTE_CURRENCY)} <span style="color:{pnl_c}">({pnl:+.2f} vs {START_CAPITAL:.0f})</span></h2>
+<p>Cash simulé : {cash:.2f} {html.escape(QUOTE_CURRENCY)} — disponible : {available_cash:.2f} — réservé (frais/commandes) : {reserved_cash:.2f}<br>
+BTC simulé : {btc:.6f} — P&amp;L réalisé : {realized:.2f} — P&amp;L non réalisé : {unrealized:.2f} — frais : {fees:.2f}<br>
+Nombre de sorties/trades simulés : {html.escape(str(ntrades))}</p>
 </div>
 <div class="card">
 <h2>Dernier signal (SIMULATION) : {html.escape(str(last_signal))}</h2>
