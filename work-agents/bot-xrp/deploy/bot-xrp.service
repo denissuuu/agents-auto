@@ -1,0 +1,19 @@
+[Unit]
+Description=Bot XRP paper trading (aucun ordre reel)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Optionnel : créer un utilisateur dédié et décommenter.
+# User=botxrp
+Group=nogroup
+WorkingDirectory=/opt/trading-bots/bot-xrp
+ExecStart=/opt/trading-bots/bot-xrp/scripts/run_forever.sh
+Restart=always
+RestartSec=10
+Environment=BOT_INTERVAL_SEC=60
+# Sécurité : le bot ne touche qu'à des données publiques, aucune clé API.
+
+[Install]
+WantedBy=multi-user.target
