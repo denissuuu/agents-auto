@@ -1,0 +1,16 @@
+[Unit]
+Description=Dashboard HTTP local du bot BTC (lecture seule)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Group=nogroup
+WorkingDirectory=/opt/trading-bots/bot-btc/data
+ExecStart=/usr/bin/python3 -m http.server 8080 --bind 127.0.0.1
+Restart=always
+RestartSec=5
+# Lié à 127.0.0.1 : accessible uniquement via tunnel SSH ou reverse proxy.
+
+[Install]
+WantedBy=multi-user.target
