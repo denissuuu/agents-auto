@@ -1,5 +1,44 @@
 {
-  "cash": 0.0,
-  "xrp": 694.9081803005008,
-  "trades": 1
+  "schema_version": 2,
+  "mode": "paper",
+  "symbol": "XRPEUR",
+  "quote_currency": "EUR",
+  "initial_capital": 1000.0,
+  "cash": 49.999999999999886,
+  "available_cash": 48.954999999999885,
+  "xrp": 697.0426662697747,
+  "position_value": 951.1147181251076,
+  "portfolio_value": 1001.1147181251075,
+  "realized_pnl": 0.0,
+  "unrealized_pnl": 1.1147181251075153,
+  "total_fees": 0.9490509490509492,
+  "closed_trades": 0,
+  "wins": 0,
+  "losses": 0,
+  "reserved_cash": 0.0,
+  "fee_reserve_cash": 1.0450000000000004,
+  "positions": [
+    {
+      "quantity": 697.0426662697747,
+      "entry_price": 1.3615392499999996,
+      "cost_basis": 950.0000000000001,
+      "opened_at": "2026-09-25T10:10:35+00:00",
+      "entry_fee": 0.9490509490509492
+    }
+  ],
+  "position_state": {
+    "entry_price": 1.3615392499999996,
+    "initial_quantity": 697.0426662697747,
+    "highest_price": 1.3645,
+    "next_level": 0,
+    "trailing_active": false,
+    "opened_at": "2026-09-25T10:10:35+00:00"
+  },
+  "pending_orders": [],
+  "fills": 1,
+  "last_price": 1.3645,
+  "daily_date": "2026-09-25",
+  "daily_start_equity": 997.6295047937585,
+  "daily_halted": false,
+  "kill_switch": false
 }
