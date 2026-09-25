@@ -1,4 +1,7 @@
-"""Fetch XRP/USDT price from Binance public API (stdlib only)."""
+"""Fetch XRP/EUR price from Binance public API (stdlib only).
+
+Aucune clé, aucun endpoint d'ordres : simple lecture du ticker public.
+"""
 import json
 import urllib.parse
 import urllib.request
@@ -6,7 +9,7 @@ import urllib.request
 API_URL = "https://api.binance.com/api/v3/ticker/price"
 
 
-def get_price(symbol="XRPUSDT"):
+def get_price(symbol="XRPEUR"):
     """Return current price as float for given symbol. Raises RuntimeError on failure."""
     url = f"{API_URL}?{urllib.parse.urlencode({'symbol': symbol})}"
     try:
@@ -24,8 +27,10 @@ def get_price(symbol="XRPUSDT"):
 
 
 def main():
-    price = get_price()
-    print(f"XRP/USDT: {price:.2f}")
+    symbol = "XRPEUR"
+    price = get_price(symbol)
+    base, quote = symbol[:-3], symbol[-3:]
+    print(f"{base}/{quote}: {price:.4f} {quote}")
 
 
 if __name__ == "__main__":
