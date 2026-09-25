@@ -1,43 +1,107 @@
-# Bot BTC — paper trading simulé ![SIMULATION](https://img.shields.io/badge/mode-SIMULATION-blue)
+# Bot BTC — paper trading et backtest sans LLM
 
-Bot pédagogique de trading simulé sur BTC/USDT (données Binance).
-Aucun ordre réel n'est envoyé : portefeuille fictif de 1000 $, signaux SMA7/SMA25 + RSI, explications en français, dashboard HTML local.
+> **SIMULATION ONLY** — cette instance ne peut pas envoyer d'ordre réel, déclarer de clé API, effectuer de dépôt ou de retrait. Le mode `paper` est activé par défaut et le live est refusé.
+
+## Objectif
+
+Cette instance BTC spot est indépendante de `bot/`, `bot-btc/` et `bot-sol/`. Elle simule un capital de **1 000 EUR** par défaut (configurable), des quantités fractionnaires et une comptabilité FIFO. Les niveaux et risques ci-dessous sont des hypothèses discutables de test, pas des paramètres optimisés.
+
+Les prix proviennent des klines publiques `BTCEUR` de Binance (lecture seule, aucun ordre). Le capital et les P&L sont comptabilisés dans la même devise que le prix (EUR), ce qui rend les résultats comparables à un compte BTC/EUR, sans conversion.
+
+## Sécurité et invariants
+
+- `config/config.json` doit contenir `mode: "paper"` et `paper: true`; toute autre valeur est refusée.
+- Le code ne contient aucun endpoint d'ordres, retrait, dépôt ou gestion de clés.
+- `Portfolio` refuse un achat dont le prix, les frais, le slippage, la liquidité et la réserve minima ne tiennent pas dans le cash libre.
+- Les commandes en attente réservent leur cash; une autre commande ne peut pas le réutiliser.
+- Le prix d'achat/simulation est ajusté du spread et du slippage; les commissions sont prélevées à l'entrée et à la sortie.
+- Le kill switch bloque les nouveaux achats; les sorties de risque restent autorisées. `--resume` est une réactivation explicite.
+- Les historique et données de `bot/`, `bot-btc/` et `bot-sol/` ne sont pas modifiés.
 
 ## Arborescence
 
-```
-bot/
-├── src/        # price, indicators, strategy, explain, notify, paper, backtest, dashboard, run
-├── config/     # config.json
-├── scripts/    # run_once.sh (1 itération paper + dashboard)
-├── docs/       # README_RUN.md (run économe)
-├── tests/      # test_price.py
-└── data/       # logs, portefeuille, dashboard (gitignored, local uniquement)
+```text
+bot-btc/
+├── src/
+│   ├── config.py       # défauts, validation et garde-fous paper-only
+│   ├── portfolio.py    # registre, réserves, fills, P&L, risques/exits
+│   ├── strategy.py     # SMA/RSI et comparateur SMA seul (aucun LLM)
+│   ├── backtest.py     # CSV/klines publiques, bougie suivante, métriques
+│   ├── paper.py        # tick paper et kill switch
+│   ├── price.py        # lecture publique du ticker, sans ordre
+│   ├── dashboard.py    # dashboard local
+│   └── run.py          # lecture de signal paper-only
+├── config/config.json
+├── tests/
+└── docs/
 ```
 
-## Démarrage rapide
+## Paramètres par défaut
+
+Les paramètres sont dans `config/config.json` et sont documentés dans [`docs/STRATEGY.md`](docs/STRATEGY.md).
+
+- Capital : `1000 EUR`, `allocation_pct: 0.20`, plafond position `25 %`, exposition totale `50 %`.
+- Coûts : commission `0,1 %`, spread `0,2 %`, slippage `0,05 %`, réserve cash `50 EUR` et réserve de frais dédiée.
+- Sorties : stop-loss `10 %`, puis cibles discutables `+5 %`, `+10 %`, `+20 %` avec `25 %`, `25 %`, `20 %` de la position; le reste est géré par trailing `8 %` ou durée maximale `30 jours`.
+- Risque journalier : `3 %`; risque maximal d'une position : `2 %` de l'équité; durée maximale : `30 jours`.
+- Liquidité : plafond `250` par trade et participation du volume configurable.
+
+Ces valeurs protègent le simulateur ; elles ne garantissent aucun gain.
+
+## Paper trading
+
+Depuis `bot-btc/` :
 
 ```bash
-python3 work-agents/bot/src/paper.py --once
-python3 work-agents/bot/src/dashboard.py && open work-agents/bot/data/dashboard.html
-bash work-agents/bot/scripts/run_once.sh
+PYTHONPATH=src python3 src/paper.py --once
+PYTHONPATH=src python3 src/paper.py --kill
+PYTHONPATH=src python3 src/paper.py --resume
 ```
 
-## Structure
+`paper.py` lit éventuellement le ticker et les klines **publiques** pour simuler un tick. Il ne passe jamais par un client d'ordres. Le registre est écrit dans `data/paper_portfolio.json` et le détail des ticks dans `data/paper.log`.
 
-- `src/paper.py` : simule un tick (prix → signal → portefeuille fictif → `data/paper.log`).
-- `src/dashboard.py` : génère `data/dashboard.html` (badge SIMULATION).
-- `src/strategy.py` + `src/indicators.py` : signal SMA/RSI ; `src/explain.py` : texte FR.
-- `config/config.json` : symbole + intervalle ; `scripts/run_once.sh` : paper + dashboard.
+## Backtest réaliste
+
+Le backtest est déterministe et n'effectue aucun accès réseau. Le signal de la bougie `i-1` est exécuté à l'ouverture de `i`; un stop et une cible touchés dans la même bougie donnent la priorité au stop.
+
+Avec un CSV local (colonnes minimales `timestamp,open,high,low,close,volume`) :
+
+```bash
+PYTHONPATH=src python3 src/backtest.py --data data/btc_history.csv
+```
+
+Pour lire des données publiques BTC sans clé ni ordre :
+
+```bash
+PYTHONPATH=src python3 src/backtest.py --public-data --symbol BTCEUR --interval 1d --json
+```
+
+Options utiles :
+
+- `--initial-capital 1000` : change le capital de test ;
+- `--strategy sma_only` : comparateur simple sans RSI ni LLM ;
+- `--walk-forward --folds 3` : blocs out-of-sample, sans optimisation implicite ;
+- `--output data/backtest.json` : sauvegarde du rapport ;
+- `--live` : refusé volontairement.
+
+Le rapport contient rendement net après frais, rendement `buy-and-hold`, drawdown maximal, trades/fills, taux de réussite, exposition moyenne, cash inutilisé moyen/final, frais et P&L réalisé/non réalisé. Les avertissements signalent les données manquantes, la liquidité supposée et toute non-comparabilité entre le prix utilisé et la devise de comptabilisation.
 
 ## Tests
 
-Lancement des tests unitaires (depuis le dossier du bot) :
-
 ```bash
-PYTHONPATH=src python3 -m pytest tests/
+cd bot-btc
+PYTHONPATH=src python3 -m pytest tests/ -q
 ```
 
-## Disclaimer
+Les tests couvrent le cash disponible, achats répétés, réservations, ventes partielles, frais, stop-loss, kill switch, exécution sur bougie suivante, walk-forward et plusieurs régimes de prix sur plusieurs mois. Les données de test sont synthétiques et ne constituent pas une preuve de performance.
 
-Aucun gain garanti, argent fictif : ce bot est une simulation pédagogique, pas un conseil financier.
+## Limites avant tout usage réel
+
+La source de prix est désormais `BTCEUR` (klines publiques Binance) : la devise du prix et la devise de comptabilisation (EUR) coïncident. Il reste à :
+
+1. Utiliser des données historiques avec volumes, spread et Liquidité représentatifs; vérifier la qualité et les gaps.
+2. Tester une optimisation walk-forward réelle, des frais variables et des scénarios de slippage/defaut de liquidité.
+3. Faire relire la stratégie, la fiscalité, les risques de marché et les contrôles de conformité par des professionnels compétents.
+4. Ne jamais ajouter de clé API ou un mode live à ce code sans une revue de sécurité et une autorisation explicite.
+
+**Disclaimer :** simulation pédagogique, pas un conseil financier. Les performances passées ou simulées ne préjugent pas des résultats futurs.
