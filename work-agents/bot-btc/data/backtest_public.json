@@ -1,0 +1,30 @@
+[
+  {
+    "strategy": "buy_hold",
+    "initial_capital": 1000.0,
+    "end_value": 1823.1289614528205,
+    "net_return_pct": 82.31289614528205,
+    "buy_hold_return_pct": 92.57685741969657,
+    "max_drawdown_pct": 50.70528062639674,
+    "trades": 0,
+    "fills": 1,
+    "win_rate_pct": 0.0,
+    "average_exposure_pct": 93.87344806039219,
+    "cash_unused_avg": 80.37090090090258,
+    "cash_unused_end": 48.954999999999885,
+    "total_fees": 0.9490509490509492,
+    "realized_pnl": 0.0,
+    "unrealized_pnl": 823.1289614528206,
+    "data_start": "2023-12-31T00:00:00+00:00",
+    "data_end": "2026-09-24T00:00:00+00:00",
+    "candle_count": 999,
+    "warnings": [
+      "dernière kline incomplète exclue",
+      "source=klines publiques Binance (lecture seule, aucun ordre)"
+    ],
+    "signal_count": 975,
+    "out_of_sample": false,
+    "simple_strategy_return_pct": null,
+    "simple_strategy_max_drawdown_pct": null
+  }
+]
